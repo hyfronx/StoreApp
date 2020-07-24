@@ -1,8 +1,22 @@
+Um pequeno e simples protótipo de um sistema de vendas
+Incluindo: Cadastro de Usuários
+                       Clientes
+                       Produtos
+                       e Ordem de Pedido
+
+Front-end: Angular
+Backend: .NET CORE / C#
+Database: Sqlite
+
 Senha e Usuário Inicial
 UserName: master
 Password: m12345
 
-.NET Core 3.1
+Versões:
+Angular: 10.0.3
+.NET Core: 3.1.302
+Entity Framework Core: 3.1.6
+ASP.NET CORE Identity: 3.1.6
 
 Para executar aplicação dotnet, navegar para a pasta Store.WebApi e usar comando: dotnet run
 
