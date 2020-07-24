@@ -1,0 +1,118 @@
+<app-title [title]="title"></app-title>
+<div class="d-flex">
+    <div class="form-inline mr-auto">
+        <div class="form-group mb-2">
+            <input type="text" class="form-control mr-2" placeholder="buscar..." [(ngModel)]="listFilter">
+        </div>
+    </div>
+    <div>
+        <button class="btn btn-outline-primary" [routerLink]="['/orders', 'neworder']">
+            <i class="fa fa-plus-circle"></i>
+            Novo Pedido
+        </button>
+    </div>
+</div>
+
+<h3>Filtro: {{listFilter}}</h3>
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>#</th>
+            <th>Data</th>
+            <th>Valor Total</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody *ngIf='ordersFiltered && ordersFiltered.length'>
+        <tr *ngFor='let order of ordersFiltered'>
+            <td>{{order.id}}</td>
+            <td>{{order.date}}</td>
+            <td>{{order.totalPurchaseAmount | currency:'BRL'}}</td>
+            <td>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-warning" tooltip="Visualizar" (click)="openOrder(order.id, template)">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot *ngIf='!ordersFiltered || !ordersFiltered.length'>
+        <tr>
+            <td colspan="4" class="text-center">
+                <h3>nenhum pedido encontrado</h3>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+
+<div bsModal #template="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-sizes-name1" class="modal-title pull-left">Resumo do Pedido</h4>
+                <button type="button" class="close pull-right" (click)="template.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row text-center">
+                    <div class="form-group col-md-3">
+                        <label>Pedido Nº</label>
+                        <label style="display:block">{{orderNumber}}</label>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Cliente</label>
+                        <label style="display:block">{{costumerName | uppercase}}</label>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label>Vendedor</label>
+                        <label style="display:block">{{sellerName | uppercase}}</label>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label>Total Compra</label>
+                        <label style="display:block">{{totalPurchase | currency:'BRL'}}</label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <table class="table table-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Quantidade</th>
+                                    <th>Valor Unitário</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngIf='orderProducts && orderProducts.length'>
+                                <tr *ngFor='let orderProduct of orderProducts'>
+                                    <td>{{orderProduct.product.name | uppercase}}</td>
+                                    <td>{{orderProduct.quantity}}</td>
+                                    <td>{{orderProduct.salePrice | currency:'BRL'}}</td>
+                                    <td>{{(orderProduct.salePrice * orderProduct.quantity) | currency:'BRL'}}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot *ngIf='!orderProducts || !orderProducts.length'>
+                                <tr>
+                                    <td colspan="4" class="text-center">
+                                        <h3>nenhum produto encontrado</h3>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-flex">
+                <button class="btn btn-secondary" (click)="template.hide()">
+                    Fechar
+                  </button>
+            </div>
+        </div>
+    </div>
+</div>

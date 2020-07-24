@@ -1,0 +1,151 @@
+<app-title [title]="title"></app-title>
+<div class="d-flex">
+    <div class="form-inline mr-auto">
+        <div class="form-group mb-2">
+            <input type="text" class="form-control mr-2" placeholder="buscar..." [(ngModel)]="listFilter">
+        </div>
+    </div>
+    <div>
+        <button class="btn btn-outline-primary" (click)='newUser(template)'>
+            <i class="fa fa-plus-circle"></i>
+            Novo Usuário
+        </button>
+    </div>
+</div>
+<h3>Filtro: {{listFilter}}</h3>
+
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>#</th>
+            <th>Login</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody *ngIf='usersFiltered && usersFiltered.length'>
+        <tr *ngFor='let user of usersFiltered'>
+            <td>{{user.id}}</td>
+            <td>{{user.userName | lowercase}}</td>
+            <td>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-success" tooltip="Editar" (click)="editUser(user, template)">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot *ngIf='!usersFiltered || !usersFiltered.length'>
+        <tr>
+            <td colspan="3" class="text-center">
+                <h3>nenhum usuário encontrado</h3>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+<div bsModal #template="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-sizes-name1" class="modal-title pull-left">Registro de Usuário</h4>
+                <button type="button" class="close pull-right" (click)="template.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="registerForm">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label>Nome</label>
+                            <input type="text" class="form-control" [ngClass]="{'is-invalid': registerForm.get('fullName').errors 
+                                            && registerForm.get('fullName').touched}" formControlName="fullName">
+                            <div *ngIf="registerForm.get('fullName').hasError('required') && registerForm.get('fullName').touched" class="invalid-feedback">
+                                Obrigatório
+                            </div>
+                            <div *ngIf="registerForm.get('fullName').hasError('minlength') && registerForm.get('fullName').touched" class="invalid-feedback">
+                                Mínimo 5 caracteres
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label>CPF</label>
+                            <input type="text" class="form-control" [ngClass]="{'is-invalid': registerForm.get('cpf').errors 
+                                            && registerForm.get('cpf').touched}" formControlName="cpf">
+                            <div *ngIf="registerForm.get('cpf').hasError('required') && registerForm.get('cpf').touched" class="invalid-feedback">
+                                Obrigatório
+                            </div>
+                            <div *ngIf="registerForm.get('cpf').hasError('minlength') && registerForm.get('cpf').touched" class="invalid-feedback">
+                                Mínimo 11 caracteres
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label>Login</label>
+                            <input type="text" class="form-control" [ngClass]="{'is-invalid': registerForm.get('userName').errors 
+                                            && registerForm.get('userName').touched}" formControlName="userName">
+                            <div *ngIf="registerForm.get('userName').hasError('required') && registerForm.get('userName').touched" class="invalid-feedback">
+                                Obrigatório
+                            </div>
+                            <div *ngIf="registerForm.get('userName').hasError('minlength') && registerForm.get('userName').touched" class="invalid-feedback">
+                                Mínimo 4 caracteres
+                            </div>
+                            <div *ngIf="registerForm.get('userName').hasError('maxlength') && registerForm.get('userName').touched" class="invalid-feedback">
+                                Máximo 10 caracteres
+                            </div>
+                        </div>
+                    </div>
+                    <div formGroupName="passwords">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label>Senha</label>
+                                <input type="password" class="form-control" [ngClass]="{'is-invalid': registerForm.get('passwords.password').errors 
+                                            && registerForm.get('passwords.password').touched}" formControlName="password">
+                                <div *ngIf="registerForm.get('passwords.password').hasError('required') && registerForm.get('passwords.password').touched" class="invalid-feedback">
+                                    Obrigatório
+                                </div>
+                                <div *ngIf="registerForm.get('passwords.password').hasError('minlength') && registerForm.get('passwords.password').touched" class="invalid-feedback">
+                                    Mínimo 6 caracteres
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label>Confimação de Senha</label>
+                                <input type="password" class="form-control" [ngClass]="{'is-invalid': 
+                                            registerForm.get('passwords.confirmPassword').errors 
+                                            && registerForm.get('passwords.confirmPassword').touched
+                                            ||registerForm.get('passwords.confirmPassword').hasError('mismatch') 
+                                            && registerForm.get('passwords.confirmPassword').touched }" formControlName="confirmPassword">
+                                <div *ngIf="registerForm.get('passwords.confirmPassword').hasError('required') && registerForm.get('passwords.confirmPassword').touched" class="invalid-feedback">
+                                    Obrigatório
+                                </div>
+                                <div *ngIf="registerForm.get('passwords.confirmPassword').hasError('mismatch') && registerForm.get('passwords.confirmPassword').touched" class="invalid-feedback">
+                                    Confirmação não confere
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer d-flex">
+                <button class="btn btn-secondary" (click)="template.hide()">
+                    Fechar
+                  </button>
+                <button class="btn btn-primary ml-auto" [disabled]='!registerForm.valid' (click)="saveChanges(template)">
+                    Salvar Alterações
+                  </button>
+            </div>
+        </div>
+    </div>
+</div>

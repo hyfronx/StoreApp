@@ -1,0 +1,99 @@
+<app-title [title]="title"></app-title>
+<div class="d-flex">
+    <div class="form-inline mr-auto">
+        <div class="form-group mb-2">
+            <input type="text" class="form-control mr-2" placeholder="buscar..." [(ngModel)]="listFilter">
+        </div>
+    </div>
+    <div>
+        <button class="btn btn-outline-primary" (click)='newProduct(template)'>
+            <i class="fa fa-plus-circle"></i>
+            Novo Produto
+        </button>
+    </div>
+</div>
+
+
+<h3>Filtro: {{listFilter}}</h3>
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>#</th>
+            <th>Nome</th>
+            <th>Valor Unitário</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody *ngIf='productsFiltered && productsFiltered.length'>
+        <tr *ngFor='let product of productsFiltered'>
+            <td>{{product.id}}</td>
+            <td>{{product.name}}</td>
+            <td>{{product.salePrice | currency:'BRL':true}}</td>
+            <td>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-success" tooltip="Editar" (click)="editProduct(product, template)">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot *ngIf='!productsFiltered || !productsFiltered.length'>
+        <tr>
+            <td colspan="4" class="text-center">
+                <h3>nenhum produto encontrado</h3>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+<div bsModal #template="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-sizes-name1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-sizes-name1" class="modal-title pull-left">Registro de Produto</h4>
+                <button type="button" class="close pull-right" (click)="template.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="registerForm">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label>Nome</label>
+                            <input type="text" class="form-control" [ngClass]="{'is-invalid': registerForm.get('name').errors 
+                                            && registerForm.get('name').touched}" formControlName="name">
+                            <div *ngIf="registerForm.get('name').hasError('required') && registerForm.get('name').touched" class="invalid-feedback">
+                                Obrigatório
+                            </div>
+                            <div *ngIf="registerForm.get('name').hasError('minlength') && registerForm.get('name').touched" class="invalid-feedback">
+                                Mínimo 5 caracteres
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label>Valor Unitário</label>
+                            <input formControlName="salePrice" currencyMask [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }" type="text" class="form-control" [ngClass]="{'is-invalid': registerForm.get('salePrice').errors && registerForm.get('salePrice').touched}"
+                                placeholder="R$ 0,00">
+                            <div *ngIf="registerForm.get('salePrice').hasError('required') && registerForm.get('salePrice').touched" class="invalid-feedback">
+                                Obrigatório
+                            </div>
+                            <div *ngIf="registerForm.get('salePrice').hasError('min') && registerForm.get('salePrice').touched" class="invalid-feedback">
+                                Valor mínimo 0,01
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer d-flex">
+                <button class="btn btn-secondary" (click)="template.hide()">
+                    Fechar
+                  </button>
+                <button class="btn btn-primary ml-auto" [disabled]='!registerForm.valid' (click)="saveChanges(template)">
+                    Salvar Alterações
+                  </button>
+            </div>
+        </div>
+    </div>
+</div>

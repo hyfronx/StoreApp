@@ -1,0 +1,75 @@
+<app-title [title]="title"></app-title>
+
+<form [formGroup]="registerForm">
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="form-row">
+                <div class="form-group col-md-8">
+                    <label>Cliente</label>
+                    <select class="form-control" [ngClass]="{'is-invalid': registerForm.get('costumerId').errors && registerForm.get('costumerId').touched}" formControlName="costumerId">
+                      <option *ngFor='let costumer of costumers' [ngValue]="costumer.id">{{costumer.companyName | uppercase }}</option>
+                    </select>
+                    <div *ngIf="registerForm.get('costumerId').hasError('required') && registerForm.get('costumerId').touched" class="invalid-feedback">
+                        Obrigatório.
+                    </div>
+                </div>
+                <div class="form-group col-md-4">
+                    <label>Valor Total</label>
+                    <input readonly type="text" class="form-control" [ngClass]="{'is-invalid': registerForm.get('totalPurchaseAmount').errors && registerForm.get('totalPurchaseAmount').touched}" formControlName="totalPurchaseAmount" placeholder="0,00" currencyMask [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }">
+                    <div *ngIf="registerForm.get('totalPurchaseAmount').hasError('min')" class="invalid-feedback">
+                        Valor mínimo 0,01.
+                    </div>
+                </div>
+            </div>
+            <hr>
+
+
+            <div>
+                <div formArrayName="orderProducts" *ngFor="let orderProduct of orderProducts.controls; let i=index">
+                    <fieldset [formGroupName]="i" class="form-group">
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                <label>Produto</label>
+                                <select class="form-control" [ngClass]="{'is-invalid': orderProducts.get(i+'.productId').errors && orderProducts.get(i+'.productId').touched}" formControlName="productId" (change)="setProductPrice(i, $event.target.value)">
+                                  <option *ngFor='let product of products' [ngValue]="product.id">{{product.name | uppercase }}</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label>Quantidade</label>
+                                <input type="number" class="form-control" [ngClass]="{'is-invalid': orderProducts.get(i+'.quantity').errors && orderProducts.get(i+'.quantity').touched}" formControlName="quantity" placeholder="000" (keyup)="getTotalItem(i, $event.target.value)">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Valor Unitário</label>
+                                <input type="text" currencyMask [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }" class="form-control" [ngClass]="{'is-invalid': orderProducts.get(i+'.salePrice').errors && orderProducts.get(i+'.salePrice').touched}" readonly
+                                    formControlName="salePrice" placeholder="R$ 0,00">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Valor Total</label>
+                                <input type="text" currencyMask [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', align: 'left' }" class="form-control" [ngClass]="{'is-invalid': orderProducts.get(i+'.amount').errors && orderProducts.get(i+'.amount').touched}" readonly formControlName="amount"
+                                    placeholder="R$ 0,00" (change)="updateTotalAmount()">
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label>.</label>
+                                <button class="btn btn-sm btn-warning mb-1" (click)="removeOrderProduct(i)">remover</button>
+                            </div>
+
+                        </div>
+                    </fieldset>
+                </div>
+                <button (click)="addOrderProduct()" class="btn btn-outline-primary">
+              Adicionar Produto
+            </button>
+            </div>
+
+
+
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-end">
+                    <!-- {{registerForm.value | json}} -->
+                    <button [disabled]="!registerForm.valid" class="btn btn-success my-2" (click)="finishOrder()">Finalizar Pedido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
